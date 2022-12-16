@@ -1,4 +1,4 @@
-package com.trkgrn.memorygame.game
+package com.trkgrn.memorygame.ui.game
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

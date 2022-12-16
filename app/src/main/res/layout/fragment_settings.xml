@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="@color/cardview_dark_background"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:text="Game Settings"
+        android:textColor="@color/cardview_light_background"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView11"
+        android:gravity="center"
+        android:textSize="36sp"
+        android:layout_alignParentTop="true"
+        app:fontFamily="@font/boogaloo"
+        android:layout_marginTop="74dp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:paddingBottom="100dp"
+        android:layout_centerInParent="true">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:paddingRight="10dp" android:layout_alignParentLeft="true"
+            android:layout_centerVertical="false" android:paddingLeft="60dp" android:id="@+id/grid_size_layout"
+            android:layout_alignTop="@id/speed_layout">
+            <TextView
+                android:text="Select Mode"
+                android:textColor="@color/cardview_light_background"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:id="@+id/textView2"
+                style="@style/Base.TextAppearance.AppCompat.Title"/>
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" android:id="@+id/grid_size_spinner">
+                <RadioButton
+                    android:text="2*2"
+                    android:textColor="@color/cardview_light_background"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:id="@+id/two_radiobutton"/>
+                <RadioButton
+                    android:text="4*4"
+                    android:textColor="@color/cardview_light_background"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:id="@+id/four_radiobutton"/>
+                <RadioButton
+                    android:text="6*6"
+                    android:textColor="@color/cardview_light_background"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:id="@+id/six_radiobutton"/>
+
+            </RadioGroup>
+
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:layout_centerVertical="false"
+            android:layout_alignParentRight="true" android:paddingRight="60dp" android:id="@+id/speed_layout">
+            <TextView
+                android:text="Player Mode "
+                android:textColor="@color/cardview_light_background"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:id="@+id/textView"
+                style="@style/Base.TextAppearance.AppCompat.Title"/>
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" android:id="@+id/difficulty_radiogroup">
+                <RadioButton
+                    android:text="One Player"
+                    android:textColor="@color/cardview_light_background"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:id="@+id/onePlayer_radiobutton"/>
+                <RadioButton
+                    android:text="Two Player"
+                    android:textColor="@color/cardview_light_background"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:id="@+id/twoPlayer_radiobutton"/>
+
+            </RadioGroup>
+        </LinearLayout>
+    </RelativeLayout>
+
+    <Button
+
+        android:layout_width="match_parent"
+        android:layout_height="230dp"
+        android:id="@+id/start_game_button"
+        android:layout_alignParentBottom="true"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:background="@drawable/ic_launcher_go_foreground"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="-3dp" />
+
+</RelativeLayout>

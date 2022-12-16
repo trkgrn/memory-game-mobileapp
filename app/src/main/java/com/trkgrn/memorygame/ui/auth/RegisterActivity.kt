@@ -1,4 +1,4 @@
-package com.trkgrn.memorygame.auth
+package com.trkgrn.memorygame.ui.auth
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -9,7 +9,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.trkgrn.memorygame.databinding.ActivityRegisterBinding
-import com.trkgrn.memorygame.game.MainLobbyActivity
+import com.trkgrn.memorygame.ui.game.MainLobbyActivity
 
 class RegisterActivity : AppCompatActivity() {
 
