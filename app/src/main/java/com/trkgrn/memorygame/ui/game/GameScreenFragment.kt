@@ -1,13 +1,16 @@
 package com.trkgrn.memorygame.ui.game
 
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.Handler
+import android.util.Base64
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Button
+import android.widget.ImageView
 import androidx.navigation.fragment.findNavController
 import com.trkgrn.memorygame.R
 import com.trkgrn.memorygame.databinding.FragmentGameScreenBinding
@@ -73,5 +76,10 @@ class GameScreenFragment : Fragment() {
         binding.showChronometer.text = String.format("%d:%02d", minutes, seconds)
     }
 
+    fun showBase64Image(base64: String, imageView: ImageView) {
+        val imageBytes = Base64.decode(base64, Base64.DEFAULT)
+        val image = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+        imageView.setImageBitmap(image)
+    }
 
 }
