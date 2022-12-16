@@ -20,7 +20,7 @@ class LoginFragment : Fragment() {
 
     private lateinit var binding:FragmentLoginBinding
     private lateinit var auth: FirebaseAuth
-    private lateinit var currentUser: FirebaseUser
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -28,7 +28,7 @@ class LoginFragment : Fragment() {
         auth = Firebase.auth
         binding = FragmentLoginBinding.inflate(inflater,container,false)
 
-        currentUser = auth.currentUser!!
+        val currentUser = auth.currentUser
 
         if (currentUser!=null)
             findNavController().navigate(R.id.gameSettings)
