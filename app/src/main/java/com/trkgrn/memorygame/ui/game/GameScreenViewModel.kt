@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.trkgrn.memorygame.data.firestore.FireStoreHelper
 import com.trkgrn.memorygame.data.model.MemoryCard
 
 class GameScreenViewModel : ViewModel(){
@@ -29,6 +28,7 @@ class GameScreenViewModel : ViewModel(){
                             val card_name = document.get("card_name")
                             val card_point = document.get("card_point")
                             val card_img = document.get("card_img")
+                            val card_home_point = document.get("card_home_point")
                             val imageBytes = Base64.decode(card_img as String, Base64.DEFAULT)
                             val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
 
@@ -36,9 +36,11 @@ class GameScreenViewModel : ViewModel(){
                                 card_name as String,
                                 card_home_name as String,
                                 card_img as String,
-                                card_point as Number,
+                                card_point as Long,
+                                card_home_point as Long,
                                 bitmap,
-                                true
+                                true,
+                                false
                             )
 
                             tempCardList.add(card)

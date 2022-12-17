@@ -7,7 +7,8 @@ class MemoryCard(
     var cardName: String,
     var cardHomeName: String,
     var cardImgBase64: String,
-    var cardPoint: Number,
+    var cardPoint: Long,
+    var cardHomePoint: Long,
     var imageBitmap: Bitmap?,
     var isHidden: Boolean = true,
     var isMatch: Boolean = false

@@ -12,7 +12,6 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.trkgrn.memorygame.R
-import com.trkgrn.memorygame.data.firestore.FireStoreHelper
 import com.trkgrn.memorygame.databinding.FragmentLoginBinding
 
 
@@ -31,7 +30,7 @@ class LoginFragment : Fragment() {
         val currentUser = auth.currentUser
 
         if (currentUser!=null)
-            findNavController().navigate(R.id.memoryGame) // settingse gidecek
+            findNavController().navigate(R.id.gameSettings) // settingse gidecek
 
         return binding.getRoot();
     }

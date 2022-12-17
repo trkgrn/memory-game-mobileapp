@@ -1,15 +1,12 @@
 package com.trkgrn.memorygame.ui.game
 
-import android.content.DialogInterface
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.RadioGroup
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.common.collect.BiMap
 import com.google.common.collect.HashBiMap
@@ -17,7 +14,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.trkgrn.memorygame.R
-import com.trkgrn.memorygame.data.firestore.FireStoreHelper
 import com.trkgrn.memorygame.databinding.FragmentSettingsBinding
 
 class SettingsFragment : Fragment() {
@@ -33,10 +29,9 @@ class SettingsFragment : Fragment() {
         const val MID_GRID = "4*4"
         const val BIG_GRID = "6*6"
 
-        var speedValues : BiMap<String, Double> = HashBiMap.create()
-        const val LOW_SPEED = "low"
-        const val MID_SPEED = "middle"
-        const val FAST_SPEED = "fast"
+        var playerModes : BiMap<String, Int> = HashBiMap.create()
+        const val SINGLE_PLAYER = "Tek Oyunculu"
+        const val TWO_PLAYER = "İki Oyunculu"
     }
 
 
@@ -45,7 +40,6 @@ class SettingsFragment : Fragment() {
         binding = FragmentSettingsBinding.inflate(layoutInflater)
         firestore = Firebase.firestore
         val view = binding.root
-        val rootView = inflater.inflate(R.layout.fragment_settings, container, false)
         radioGroupGameMode = binding.gridSizeSpinner
         radioGroupPlayerMode = binding.difficultyRadiogroup
         startGameButton = binding.startGameButton
@@ -56,12 +50,11 @@ class SettingsFragment : Fragment() {
 
     private fun initializeHashMaps() {
         gridSizes[SMALL_GRID] = 2
-        gridSizes[MID_GRID] = 8
-        gridSizes[BIG_GRID] = 18
+        gridSizes[MID_GRID] = 4
+        gridSizes[BIG_GRID] = 6
 
-        speedValues[LOW_SPEED] = 2000.0
-        speedValues[MID_SPEED] = 1000.0
-        speedValues[FAST_SPEED] = 500.0
+        playerModes[SINGLE_PLAYER] = 1
+        playerModes[TWO_PLAYER] = 2
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -69,39 +62,24 @@ class SettingsFragment : Fragment() {
 
         startGameButton.setOnClickListener {
 
-          //  var list = FireStoreHelper.getInstance().getAllCards()
-          //  println(list!!.size)
-            Toast.makeText(context,"",Toast.LENGTH_LONG).show()
+            val selectedItem = radioGroupGameMode.checkedRadioButtonId
+            val checkedRadioButtonId = radioGroupPlayerMode.checkedRadioButtonId
+            val gridSize = getGridSizeFromSelectedId(selectedItem)!!
+            val playerMode = getPlayerModeFromSelectedRadioButtonId(checkedRadioButtonId)!!
+
+            println("GridSize: " + gridSize.toString())
+            println("pMode: "+ playerMode.toString())
+
+            var bundle:Bundle = Bundle()
+            bundle.putInt("gridSize",gridSize)
+            bundle.putInt("playerMode",playerMode)
+
+            findNavController().navigate(R.id.memoryGame,bundle)
+
 
 
         }
 
-//        startGameButton.setOnClickListener{
-//            val selectedItem = radioGroupGameMode.checkedRadioButtonId
-//            val checkedRadioButtonId = radioGroupPlayerMode.checkedRadioButtonId
-//            val gridSize = getGridSizeFromSelectedId(selectedItem)!!
-//            val jsonReader = JSONReader(context!!, gridSize)
-//            val speed = getSpeedFromSelectedRadioButtonId(checkedRadioButtonId)!!
-//
-//            val memoryCardList = jsonReader.memoryCardList
-//            if (memoryCardList.isNullOrEmpty()){
-//                val alertDialogBuilder: AlertDialog.Builder = AlertDialog.Builder(context!!)
-//                    .setPositiveButton("ok", DialogInterface.OnClickListener { dialog, _ ->
-//                        dialog.dismiss()
-//                        findNavController().navigate(R.id.mainScreen)
-//                    })
-//                    .setTitle("The file " + jsonReader.FILE_NAME + " could not be read due to an exception")
-//                alertDialogBuilder.create().show()
-//            }
-//            else {
-//                val bundle = Bundle()
-//                val settings = GameSettings(speed.toInt(), gridSize)
-//                bundle.putParcelable(getString(R.string.bundle_settings), settings)
-//                bundle.putParcelableArrayList(getString(R.string.bundle_card_array), jsonReader.memoryCardList)
-//
-//                findNavController().navigate(R.id.memoryGame, bundle)
-//            }
-//        }
     }
 
     private fun getGridSizeFromSelectedId(selectedItem:Int) = when (selectedItem){
@@ -112,10 +90,10 @@ class SettingsFragment : Fragment() {
         else -> gridSizes[MID_GRID]
     }
 
-    private fun getSpeedFromSelectedRadioButtonId(selectedDifficulty:Int) = when (selectedDifficulty){
-        R.id.onePlayer_radiobutton -> speedValues[LOW_SPEED]
-        R.id.twoPlayer_radiobutton -> speedValues[MID_SPEED]
-        else -> speedValues[MID_SPEED]
+    private fun getPlayerModeFromSelectedRadioButtonId(selectedDifficulty:Int) = when (selectedDifficulty){
+        R.id.onePlayer_radiobutton -> playerModes[SINGLE_PLAYER]
+        R.id.twoPlayer_radiobutton -> playerModes[TWO_PLAYER]
+        else -> playerModes[SINGLE_PLAYER]
     }
 
 }

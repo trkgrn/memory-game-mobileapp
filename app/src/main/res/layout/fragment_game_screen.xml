@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/white">
 
     <RelativeLayout
         android:id="@+id/wrap_status"
@@ -24,7 +25,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginLeft="10dp"
-                android:text="@string/time_tag"
+                android:text="Kalan Süre"
                 android:textColor="@color/colorPrimary"
                 android:textSize="18sp"
                 app:fontFamily="@font/boogaloo" />
@@ -35,6 +36,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginLeft="5dp"
+                android:text="0"
                 android:textColor="@color/colorAccent" />
         </LinearLayout>
 
@@ -50,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:gravity="right"
-                android:text="score"
+                android:text="Puan"
                 android:textColor="@color/colorPrimary"
                 android:textSize="18sp"
                 app:fontFamily="@font/boogaloo" />
