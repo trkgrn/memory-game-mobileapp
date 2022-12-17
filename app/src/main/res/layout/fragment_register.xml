@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:background="@color/cardview_dark_background"
+    android:background="@drawable/harrypotter"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.auth.RegisterFragment">
@@ -68,12 +68,17 @@
 
                 <Button
                     android:id="@+id/registerButton"
+                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                    android:layout_width="170dp"
+                    android:layout_height="92dp"
+                    android:layout_centerInParent="true"
                     android:layout_gravity="center"
-                    android:textColorHint="@color/cardview_light_background"
-                    android:layout_width="91dp"
-                    android:layout_height="98dp"
-                    android:background="@drawable/ic_launcher_register_foreground"
-                    android:layout_centerInParent="true" />
+                    android:fontFamily="sans-serif-black"
+                    android:text="Register"
+                    android:textSize="20sp"
+                    android:typeface="normal"
+                    app:strokeColor="#FBFBFB"
+                    app:strokeWidth="2dp" />
             </LinearLayout>
         </LinearLayout>
 
