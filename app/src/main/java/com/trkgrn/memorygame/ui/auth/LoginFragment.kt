@@ -31,7 +31,7 @@ class LoginFragment : Fragment() {
         val currentUser = auth.currentUser
 
         if (currentUser!=null)
-            findNavController().navigate(R.id.gameSettings)
+            findNavController().navigate(R.id.memoryGame) // settingse gidecek
 
         return binding.getRoot();
     }

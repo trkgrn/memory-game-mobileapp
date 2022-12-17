@@ -1,43 +1,28 @@
-package com.trkgrn.memorygame.data.firestore
+package com.trkgrn.memorygame.ui.game
 
-import android.content.Context
 import android.graphics.BitmapFactory
 import android.util.Base64
-import android.widget.ImageView
-import android.widget.Toast
-import com.google.firebase.firestore.FirebaseFirestore
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.trkgrn.memorygame.data.firestore.FireStoreHelper
 import com.trkgrn.memorygame.data.model.MemoryCard
 
-class FireStoreHelper {
-    private lateinit var firestore: FirebaseFirestore
+class GameScreenViewModel : ViewModel(){
 
-    companion object {
-        private var instance: FireStoreHelper? = null
-        fun getInstance(): FireStoreHelper {
-            if (instance == null) {
-                instance = FireStoreHelper()
-            }
-            return instance as FireStoreHelper
-        }
-    }
+    val cardList = MutableLiveData<ArrayList<MemoryCard>>()
 
-
-     fun getAllCards(): ArrayList<MemoryCard> {
-
-            firestore = Firebase.firestore
-
-
-        var cardList = ArrayList<MemoryCard>()
-
-        firestore.collection("MemoryCard").addSnapshotListener { value, error ->
+    init {
+        Firebase.firestore.collection("MemoryCard").addSnapshotListener { value, error ->
             if (error != null) {
                 println("FireBase Hatasi")
             } else {
                 if (value != null) {
                     if (!value.isEmpty) {
+                        val tempCardList = ArrayList<MemoryCard>()
                         val documents = value.documents
+
                         for (document in documents) {
 
                             val card_home_name = document.get("card_home_name")
@@ -56,17 +41,14 @@ class FireStoreHelper {
                                 true
                             )
 
-                            cardList.add(card)
-                            println(card.cardName)
+                            tempCardList.add(card)
                         }
+                        cardList.value = tempCardList
 
                     }
                 }
             }
-
         }
-        return cardList
     }
-
 
 }

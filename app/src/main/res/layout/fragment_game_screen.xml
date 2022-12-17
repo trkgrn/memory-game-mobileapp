@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
     <RelativeLayout
         android:id="@+id/wrap_status"
         android:layout_width="match_parent"
@@ -11,64 +12,80 @@
         android:layout_alignParentTop="true">
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
-            android:paddingLeft="10dp"
-            android:layout_alignParentStart="true">
+            android:orientation="horizontal"
+            android:paddingLeft="10dp">
+
             <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
                 android:layout_marginLeft="10dp"
                 android:text="@string/time_tag"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:textColor="@color/colorPrimary"
-                app:fontFamily="@font/boogaloo"
                 android:textSize="18sp"
-                android:layout_marginStart="10dp"/>
+                app:fontFamily="@font/boogaloo" />
+
             <TextView
                 android:id="@+id/show_chronometer"
-                android:textColor="@color/colorAccent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
                 android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp"/>
+                android:textColor="@color/colorAccent" />
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:layout_alignParentRight="true" android:paddingRight="10dp">
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:orientation="horizontal"
+            android:paddingRight="10dp">
+
             <TextView
-                android:layout_marginLeft="10dp"
-                android:text="score"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorPrimary" android:gravity="right" app:fontFamily="@font/boogaloo"
-                android:textSize="18sp"/>
+                android:layout_marginLeft="10dp"
+                android:gravity="right"
+                android:text="score"
+                android:textColor="@color/colorPrimary"
+                android:textSize="18sp"
+                app:fontFamily="@font/boogaloo" />
+
             <TextView
                 android:id="@+id/show_points"
-                android:textColor="@color/colorAccent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:gravity="right"
                 android:text="0"
-                android:layout_marginLeft="5dp" android:gravity="right"/>
+                android:textColor="@color/colorAccent" />
         </LinearLayout>
 
     </RelativeLayout>
 
     <GridView
         android:id="@+id/grid_main_cards"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
+        android:layout_below="@id/wrap_status"
+        android:layout_marginTop="32dp"
         android:numColumns="4"
-        android:layout_marginTop="32dp" android:paddingBottom="20dp" android:layout_below="@id/wrap_status"/>
+        android:paddingBottom="20dp" />
+
     <Button
-        android:text="@string/shuffle_button_tag"
+        android:id="@+id/shuffle_button"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" android:id="@+id/shuffle_button"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:textAllCaps="true" style="@style/Widget.AppCompat.Button.Colored"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium" android:textColor="@android:color/white"
-        android:background="@color/colorPrimary" android:textStyle="bold"/>
+        android:background="@color/colorPrimary"
+        android:text="@string/shuffle_button_tag"
+        android:textAllCaps="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@android:color/white"
+        android:textStyle="bold" />
 </RelativeLayout>

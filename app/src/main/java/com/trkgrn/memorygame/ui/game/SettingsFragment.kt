@@ -69,8 +69,8 @@ class SettingsFragment : Fragment() {
 
         startGameButton.setOnClickListener {
 
-            var list = FireStoreHelper.getInstance().getAllCards()
-            println(list!!.size)
+          //  var list = FireStoreHelper.getInstance().getAllCards()
+          //  println(list!!.size)
             Toast.makeText(context,"",Toast.LENGTH_LONG).show()
 
 
