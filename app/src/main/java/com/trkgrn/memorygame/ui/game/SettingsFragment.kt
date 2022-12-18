@@ -24,10 +24,10 @@ class SettingsFragment : Fragment() {
     lateinit var firestore:FirebaseFirestore
 
     companion object{
-        var gridSizes: BiMap<String, Int> = HashBiMap.create()
-        const val SMALL_GRID = "2*2"
-        const val MID_GRID = "4*4"
-        const val BIG_GRID = "6*6"
+        var difficulties: BiMap<String, Int> = HashBiMap.create()
+        const val EASY = "Kolay"
+        const val MID = "Orta"
+        const val HARD = "Zor"
 
         var playerModes : BiMap<String, Int> = HashBiMap.create()
         const val SINGLE_PLAYER = "Tek Oyunculu"
@@ -49,9 +49,9 @@ class SettingsFragment : Fragment() {
     }
 
     private fun initializeHashMaps() {
-        gridSizes[SMALL_GRID] = 2
-        gridSizes[MID_GRID] = 4
-        gridSizes[BIG_GRID] = 6
+        difficulties[EASY] = 2
+        difficulties[MID] = 4
+        difficulties[HARD] = 6
 
         playerModes[SINGLE_PLAYER] = 1
         playerModes[TWO_PLAYER] = 2
@@ -64,7 +64,7 @@ class SettingsFragment : Fragment() {
 
             val selectedItem = radioGroupGameMode.checkedRadioButtonId
             val checkedRadioButtonId = radioGroupPlayerMode.checkedRadioButtonId
-            val gridSize = getGridSizeFromSelectedId(selectedItem)!!
+            val gridSize = getDifficultyFromSelectedId(selectedItem)!!
             val playerMode = getPlayerModeFromSelectedRadioButtonId(checkedRadioButtonId)!!
 
             println("GridSize: " + gridSize.toString())
@@ -76,18 +76,16 @@ class SettingsFragment : Fragment() {
 
             findNavController().navigate(R.id.memoryGame,bundle)
 
-
-
         }
 
     }
 
-    private fun getGridSizeFromSelectedId(selectedItem:Int) = when (selectedItem){
+    private fun getDifficultyFromSelectedId(selectedItem:Int) = when (selectedItem){
 
-        R.id.two_radiobutton -> gridSizes[SMALL_GRID]
-        R.id.four_radiobutton -> gridSizes[MID_GRID]
-        R.id.six_radiobutton-> gridSizes[BIG_GRID]
-        else -> gridSizes[MID_GRID]
+        R.id.two_radiobutton -> difficulties[EASY]
+        R.id.four_radiobutton -> difficulties[MID]
+        R.id.six_radiobutton-> difficulties[HARD]
+        else -> difficulties[MID]
     }
 
     private fun getPlayerModeFromSelectedRadioButtonId(selectedDifficulty:Int) = when (selectedDifficulty){

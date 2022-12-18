@@ -72,5 +72,7 @@ class LoginFragment : Fragment() {
         findNavController().navigate(R.id.registerFragment)
     }
 
+    fun signUp(view: View) {}
+
 
 }

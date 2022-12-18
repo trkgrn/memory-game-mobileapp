@@ -43,6 +43,7 @@ class GameScreenViewModel : ViewModel(){
                                 false
                             )
 
+
                             tempCardList.add(card)
                         }
                         cardList.value = tempCardList
