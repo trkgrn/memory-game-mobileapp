@@ -30,12 +30,6 @@
         tools:layout="@layout/fragment_main_lobby" />
 
     <fragment
-        android:id="@+id/finishedGameFragment"
-        android:name="com.trkgrn.memorygame.ui.game.EndGameFragment"
-        android:label="FinishedGameFragment"
-        tools:layout="@layout/fragment_end_game" />
-
-    <fragment
         android:id="@+id/registerFragment"
         android:name="com.trkgrn.memorygame.ui.auth.RegisterFragment"
         android:label="fragment_register"

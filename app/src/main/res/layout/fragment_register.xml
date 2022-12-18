@@ -20,17 +20,18 @@
             android:orientation="vertical">
 
             <TextView
-                android:text="REGISTER"
+                android:text="KAYIT OL"
                 android:textAlignment="center"
                 android:layout_width="match_parent"
-                android:layout_height="137dp"
+                android:layout_height="100dp"
                 android:id="@+id/textView3"
+                android:layout_marginTop="50dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:textColor="@android:color/white"
                 android:layout_above="@id/init_button"
                 android:layout_centerHorizontal="true"
                 android:textSize="50sp"
-                app:fontFamily="@font/boogaloo" />
+                app:fontFamily="@font/harry_potter" />
 
 
             <EditText
@@ -39,14 +40,14 @@
                 android:inputType="textEmailAddress"
                 android:textColorHint="@color/cardview_light_background"
                 android:ems="10"
-                android:hint="email address"
+                android:hint="E-Mail Adresi"
                 android:id="@+id/registerEmailAddress" />
 
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
-                android:hint="password"
+                android:hint="Şifre"
                 android:textColorHint="@color/cardview_light_background"
                 android:ems="10"
                 android:id="@+id/registerPassword" />
@@ -55,7 +56,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
-                android:hint="password"
+                android:hint="Tekrar Şifre"
                 android:textColorHint="@color/cardview_light_background"
                 android:ems="10"
                 android:id="@+id/registerConfirmPassword" />
@@ -69,11 +70,11 @@
                 <Button
                     android:id="@+id/registerButton"
                     style="@style/Widget.AppCompat.Button.Borderless.Colored"
-                    android:layout_width="162dp"
-                    android:layout_height="79dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
                     android:layout_centerInParent="true"
-                    android:fontFamily="sans-serif-black"
-                    android:text="Register"
+                    android:fontFamily="@font/harry_potter"
+                    android:text="KAYDI TAMAMLA"
                     android:textSize="20sp"
                     android:typeface="normal"
                     app:strokeColor="#FBFBFB"
