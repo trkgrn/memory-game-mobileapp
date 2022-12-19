@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -13,7 +14,6 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.trkgrn.memorygame.R
 import com.trkgrn.memorygame.databinding.FragmentRegisterBinding
-import com.trkgrn.memorygame.ui.game.MainLobbyActivity
 
 
 class RegisterFragment : Fragment() {
@@ -28,7 +28,7 @@ class RegisterFragment : Fragment() {
         auth = Firebase.auth
         binding = FragmentRegisterBinding.inflate(layoutInflater)
         val view = binding.root
-
+        setHasOptionsMenu(true)
 
         return view
     }
@@ -63,6 +63,16 @@ class RegisterFragment : Fragment() {
             println(email)
             println(password)
         }
+
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        var myMenu = menu!!
+        myMenu.findItem(R.id.menuLogin).isVisible = true
+        myMenu.findItem(R.id.menuRegister).isVisible = true
+        myMenu.findItem(R.id.menuChangePassword).isVisible = false
+        myMenu.findItem(R.id.menuLogout).isVisible = false
 
     }
 

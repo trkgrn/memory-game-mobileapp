@@ -3,14 +3,17 @@ package com.trkgrn.memorygame.ui.auth
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.get
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.trkgrn.memorygame.MainActivity
 import com.trkgrn.memorygame.R
 import com.trkgrn.memorygame.databinding.FragmentLoginBinding
 
@@ -26,13 +29,8 @@ class LoginFragment : Fragment() {
     ): View? {
         auth = Firebase.auth
         binding = FragmentLoginBinding.inflate(inflater,container,false)
-
-        val currentUser = auth.currentUser
-
-        if (currentUser!=null)
-            findNavController().navigate(R.id.gameSettings) // settingse gidecek
-
-        return binding.getRoot();
+        setHasOptionsMenu(true)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -69,6 +67,17 @@ class LoginFragment : Fragment() {
 
     fun register(){
         findNavController().navigate(R.id.registerFragment)
+    }
+
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        var myMenu = menu!!
+        myMenu.findItem(R.id.menuLogin).isVisible = true
+        myMenu.findItem(R.id.menuRegister).isVisible = true
+        myMenu.findItem(R.id.menuChangePassword).isVisible = false
+        myMenu.findItem(R.id.menuLogout).isVisible = false
+
     }
 
 }

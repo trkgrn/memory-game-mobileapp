@@ -41,4 +41,10 @@
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" />
 
+    <fragment
+        android:id="@+id/changePasswordFragment"
+        android:name="com.trkgrn.memorygame.ui.auth.ChangePasswordFragment"
+        android:label="fragment_change_password"
+        tools:layout="@layout/fragment_change_password" />
+
 </navigation>

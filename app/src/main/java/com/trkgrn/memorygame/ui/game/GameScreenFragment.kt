@@ -5,11 +5,13 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.GridView
 import android.widget.ImageView
 import androidx.activity.addCallback
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -49,7 +51,7 @@ class GameScreenFragment : Fragment() {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = FragmentGameScreenBinding.inflate(layoutInflater)
         val view = binding.root
-
+        setHasOptionsMenu(true)
         val callback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             println("Tıklandı")
         }
@@ -183,6 +185,7 @@ class GameScreenFragment : Fragment() {
             }
         }.start()
     }
+
 
     fun gameLogic(convertView: View, position: Int) {
         var remainingTime = binding.showChronometer.text.toString().toInt()
@@ -378,6 +381,16 @@ class GameScreenFragment : Fragment() {
         }
 
         return score
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        var myMenu = menu!!
+        myMenu.findItem(R.id.menuLogin).isVisible = false
+        myMenu.findItem(R.id.menuRegister).isVisible = false
+        myMenu.findItem(R.id.menuChangePassword).isVisible = false
+        myMenu.findItem(R.id.menuLogout).isVisible = false
+
     }
 
 }

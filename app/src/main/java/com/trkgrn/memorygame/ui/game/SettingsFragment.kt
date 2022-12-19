@@ -2,6 +2,7 @@ package com.trkgrn.memorygame.ui.game
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -44,7 +45,7 @@ class SettingsFragment : Fragment() {
         radioGroupGameMode = binding.gridSizeSpinner
         radioGroupPlayerMode = binding.difficultyRadiogroup
         startGameButton = binding.startGameButton
-
+        setHasOptionsMenu(true);
         val callback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             println("Çıkışa götür")
         }
@@ -97,6 +98,15 @@ class SettingsFragment : Fragment() {
         R.id.onePlayer_radiobutton -> playerModes[SINGLE_PLAYER]
         R.id.twoPlayer_radiobutton -> playerModes[TWO_PLAYER]
         else -> playerModes[SINGLE_PLAYER]
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        var myMenu = menu!!
+        myMenu.findItem(R.id.menuLogin).isVisible = false
+        myMenu.findItem(R.id.menuRegister).isVisible = false
+        myMenu.findItem(R.id.menuChangePassword).isVisible = true
+        myMenu.findItem(R.id.menuLogout).isVisible = true
     }
 
 }

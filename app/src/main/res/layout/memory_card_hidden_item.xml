@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
+    <data>
+        <variable
+            name="width"
+            type="java.lang.Integer"/>
+        <variable
+            name="height"
+            type="java.lang.Integer"/>
+    </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -22,4 +30,6 @@
     </LinearLayout>
 
 </layout>
+
+
 

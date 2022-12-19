@@ -12,12 +12,23 @@ fun main(args: Array<String>){
 //    println(list.random(Random(5)))
 //    println(list)
 
-    var card:MemoryCard = MemoryCard("Abc","Xyz","",1,1,null,)
-    println(card.hashCode())
-    var card2 = MemoryCard(card)
-    println(card2.hashCode())
-    println(card.equals(card2))
-    var card3 = MemoryCard(card)
-    println(card3.hashCode())
+//    var card:MemoryCard = MemoryCard("Abc","Xyz","",1,1,null,)
+//    println(card.hashCode())
+//    var card2 = MemoryCard(card)
+//    println(card2.hashCode())
+//    println(card.equals(card2))
+//    var card3 = MemoryCard(card)
+//    println(card3.hashCode())
+
+    var x = true
+
+    x = if (x) false else true
+    println(x)
+    x = if (x) false else true
+    println(x)
+    x = if (x) false else true
+    println(x)
+
+
 
 }
