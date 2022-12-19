@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.RadioGroup
+import androidx.activity.addCallback
+import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.common.collect.BiMap
@@ -14,6 +16,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.trkgrn.memorygame.R
+import com.trkgrn.memorygame.data.model.MemoryCard
 import com.trkgrn.memorygame.databinding.FragmentSettingsBinding
 
 class SettingsFragment : Fragment() {
@@ -21,7 +24,6 @@ class SettingsFragment : Fragment() {
     lateinit var radioGroupGameMode: RadioGroup
     lateinit var radioGroupPlayerMode: RadioGroup
     lateinit var startGameButton: Button
-    lateinit var firestore:FirebaseFirestore
 
     companion object{
         var difficulties: BiMap<String, Int> = HashBiMap.create()
@@ -38,11 +40,14 @@ class SettingsFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = FragmentSettingsBinding.inflate(layoutInflater)
-        firestore = Firebase.firestore
         val view = binding.root
         radioGroupGameMode = binding.gridSizeSpinner
         radioGroupPlayerMode = binding.difficultyRadiogroup
         startGameButton = binding.startGameButton
+
+        val callback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            println("Çıkışa götür")
+        }
 
         initializeHashMaps()
         return view

@@ -46,7 +46,6 @@ class LoginFragment : Fragment() {
             register()
         }
 
-
     }
 
 
@@ -71,8 +70,5 @@ class LoginFragment : Fragment() {
     fun register(){
         findNavController().navigate(R.id.registerFragment)
     }
-
-    fun signUp(view: View) {}
-
 
 }

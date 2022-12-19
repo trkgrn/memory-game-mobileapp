@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.GridView
 import android.widget.ImageView
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -24,24 +25,23 @@ import java.util.stream.IntStream
 class GameScreenFragment : Fragment() {
 
     private lateinit var binding: FragmentGameScreenBinding
-    private lateinit var firestore: FirebaseFirestore
+    private val viewModel: GameScreenViewModel by viewModels()
 
     private var gridNumColumns = 4
     private var playerMode = 1
     private var totalTime = 0L
 
-    private val viewModel: GameScreenViewModel by viewModels()
-
-
     private var allCards = ArrayList<MemoryCard>()
-    private var splitCards = ArrayList<MemoryCard>()
+    private var gameCards = ArrayList<MemoryCard>()
+
     private var curView: ImageView? = null
 
     private var selectedCardFirst: Int? = null
     private var selectedCardSecond: Int? = null
-
     private var selectedFirstView: ImageView? = null
     private var selectedSecondView: ImageView? = null
+
+    private var isGameFinished = false
 
 
     override fun onCreateView(
@@ -50,10 +50,15 @@ class GameScreenFragment : Fragment() {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = FragmentGameScreenBinding.inflate(layoutInflater)
         val view = binding.root
-        firestore = Firebase.firestore
+
+        val callback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            println("Tıklandı")
+        }
 
         return view
     }
+
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -70,47 +75,48 @@ class GameScreenFragment : Fragment() {
             gridView.setOnItemClickListener { adapterView, convertView, position, id ->
 
                 var remainingTime = binding.showChronometer.text.toString().toInt()
-                var lastTime = 45 - remainingTime
+                var lastTime = totalTime.toString().toInt() - remainingTime
 
-                if (splitCards.get(position).isMatch || position == selectedCardFirst) {
+                if (gameCards.get(position).isMatch || position == selectedCardFirst) {
 
                 } else {
-                    if (selectedCardFirst == null) {
+                    if (selectedCardFirst == null) { // ilk kart seçiliyorsa
                         selectedCardFirst = position
                         curView = convertView.findViewById<ImageView>(R.id.card_item)
                         selectedFirstView = curView
-                        curView!!.setImageBitmap(splitCards.get(position).imageBitmap)
-                        splitCards.get(position).isHidden = false
-                    } else if (selectedCardFirst != null && selectedCardSecond == null) {
+                        curView!!.setImageBitmap(gameCards.get(position).imageBitmap)
+                        gameCards.get(position).isHidden = false
+                    } else if (selectedCardFirst != null && selectedCardSecond == null) { // 2. kart seçiliyorsa
                         selectedCardSecond = position
                         curView = convertView.findViewById<ImageView>(R.id.card_item)
                         selectedSecondView = curView
-                        curView!!.setImageBitmap(splitCards.get(position).imageBitmap)
-                        splitCards.get(position).isHidden = false
+                        curView!!.setImageBitmap(gameCards.get(position).imageBitmap)
+                        gameCards.get(position).isHidden = false
                     }
 
                     if (selectedCardFirst != null && selectedCardSecond != null) { // 2 kart seçildiyse
-                        val name1 = splitCards.get(selectedCardFirst!!).cardName
-                        val name2 = splitCards.get(selectedCardSecond!!).cardName
+                        val name1 = gameCards.get(selectedCardFirst!!).cardName
+                        val name2 = gameCards.get(selectedCardSecond!!).cardName
 
                         if (name1.equals(name2)) { // Kartlar Eşleşiyorsa
-                            var score = binding.showPoints.text.toString().toLong()
-                            splitCards.get(selectedCardFirst!!).isMatch = true
-                            splitCards.get(selectedCardSecond!!).isMatch = true
+                            var score = binding.score1.text.toString().toLong()
+                            gameCards.get(selectedCardFirst!!).isMatch = true
+                            gameCards.get(selectedCardSecond!!).isMatch = true
                             score += trueMatchPoint(
-                                splitCards.get(selectedCardFirst!!),
+                                gameCards.get(selectedCardFirst!!),
                                 remainingTime
                             )
-                            binding.showPoints.text = score.toString()
+                            binding.score1.text = score.toString()
                             selectedCardFirst = null
                             selectedCardSecond = null
 
                             var falseMatchCount: Int = 0
-                            splitCards.forEach {
+                            gameCards.forEach {
                                 if (!it.isMatch)
                                     falseMatchCount++
                             }
                             if (falseMatchCount == 0) {
+                                println("Cards:"+gameCards.size + " Falses:"+falseMatchCount)
                                 onFinishGame()
                             }
 
@@ -118,32 +124,26 @@ class GameScreenFragment : Fragment() {
                             object : CountDownTimer(300, 100) {
                                 override fun onTick(p0: Long) {}
                                 override fun onFinish() {
-                                    var score = binding.showPoints.text.toString().toLong()
+                                    var score = binding.score1.text.toString().toLong()
                                     var point = falseMatchPoint(
-                                        splitCards.get(selectedCardFirst!!),
-                                        splitCards.get(selectedCardSecond!!),
+                                        gameCards.get(selectedCardFirst!!),
+                                        gameCards.get(selectedCardSecond!!),
                                         lastTime
                                     )
                                     score = score - point
-                                    println("Eksilen: " + point)
-                                    binding.showPoints.text = score.toString()
+                                    binding.score1.text = score.toString()
                                     selectedFirstView!!.setImageResource(R.drawable.card_front_side)
                                     selectedSecondView!!.setImageResource(R.drawable.card_front_side)
-                                    splitCards.get(selectedCardFirst!!).isHidden = true
-                                    splitCards.get(selectedCardSecond!!).isHidden = true
+                                    gameCards.get(selectedCardFirst!!).isHidden = true
+                                    gameCards.get(selectedCardSecond!!).isHidden = true
                                     selectedCardFirst = null
                                     selectedCardSecond = null
                                 }
                             }.start()
 
                         }
-
-
                     }
-
-
                 }
-
 
             }
 
@@ -160,18 +160,22 @@ class GameScreenFragment : Fragment() {
         if (playerMode == 1) {
             binding.showChronometer.text = "45"
             totalTime = 45L
+            binding.score2.visibility = View.GONE
+            binding.score2.visibility = View.GONE
         } else {
             binding.showChronometer.text = "60"
             totalTime = 60L
+            binding.score2Textview.visibility = View.VISIBLE
+            binding.score2.visibility = View.VISIBLE
         }
     }
 
-    /*
+    fun loadGameCards(gridView: GridView) {
+        /*
     2x2 -> 2  -> 1 1 0 0
     4x4 -> 8  -> 2 2 2 2
     6x6 -> 18 -> 5 5 4 4
     * */
-    fun loadGameCards(gridView: GridView) {
         var ravenclawList = allCards.filter { it.cardHomeName.equals("RAVENCLAW") }.shuffled()
         var gryffindorList = allCards.filter { it.cardHomeName.equals("GRYFFİNDOR") }.shuffled()
         var slytherinList = allCards.filter { it.cardHomeName.equals("SLYTHERİN") }.shuffled()
@@ -185,8 +189,8 @@ class GameScreenFragment : Fragment() {
             card1 = ravenclawList.random()
             card2 = gryffindorList.random()
             IntStream.range(0, 2).forEach {
-                splitCards.add(MemoryCard(card1!!))
-                splitCards.add(MemoryCard(card2!!))
+                gameCards.add(MemoryCard(card1!!))
+                gameCards.add(MemoryCard(card2!!))
             }
         } else if (gridNumColumns == 4) {
             IntStream.range(0, 2).forEach {
@@ -195,10 +199,10 @@ class GameScreenFragment : Fragment() {
                 card3 = slytherinList.get(it)
                 card4 = hufflepuffList.get(it)
                 IntStream.range(0, 2).forEach {
-                    splitCards.add(MemoryCard(card1!!))
-                    splitCards.add(MemoryCard(card2!!))
-                    splitCards.add(MemoryCard(card3!!))
-                    splitCards.add(MemoryCard(card4!!))
+                    gameCards.add(MemoryCard(card1!!))
+                    gameCards.add(MemoryCard(card2!!))
+                    gameCards.add(MemoryCard(card3!!))
+                    gameCards.add(MemoryCard(card4!!))
                 }
             }
 
@@ -211,26 +215,29 @@ class GameScreenFragment : Fragment() {
                     card4 = hufflepuffList.get(it)
                 }
                 IntStream.range(0, 2).forEach {iter->
-                    splitCards.add(MemoryCard(card1!!))
-                    splitCards.add(MemoryCard(card2!!))
+                    gameCards.add(MemoryCard(card1!!))
+                    gameCards.add(MemoryCard(card2!!))
                     if (it != 4) {
-                        splitCards.add(MemoryCard(card3!!))
-                        splitCards.add(MemoryCard(card4!!))
+                        gameCards.add(MemoryCard(card3!!))
+                        gameCards.add(MemoryCard(card4!!))
                     }
 
                 }
             }
         }
 
-        splitCards.shuffle()
+        gameCards.shuffle()
         gridView.numColumns = gridNumColumns
-        val memoryCardAdapter = MemoryCardAdapter(this@GameScreenFragment, splitCards)
+        val memoryCardAdapter = MemoryCardAdapter(this@GameScreenFragment, gameCards)
         gridView.adapter = memoryCardAdapter
     }
 
     fun startGame() {
         object : CountDownTimer(1000 * totalTime, 1000) {
             override fun onTick(p0: Long) {
+                if (isGameFinished)
+                    cancel()
+
                 var remainingTime = binding.showChronometer.text.toString().toInt()
                 remainingTime--
                 binding.showChronometer.text = remainingTime.toString()
@@ -243,22 +250,25 @@ class GameScreenFragment : Fragment() {
     }
 
     fun onFinishGame() {
+        isGameFinished = true
         val dialogBuilder = AlertDialog.Builder(context)
-        val score = binding.showPoints.text.toString().toInt()
+        val score = binding.score1.text.toString().toInt()
 
         dialogBuilder.setMessage("Skor: " + score)
             .setCancelable(false)
             .setPositiveButton("Ayarlara Dön", DialogInterface.OnClickListener { dialog, id ->
-                findNavController().navigate(R.id.gameSettings)
+                arguments?.putParcelableArrayList("cardList",allCards)
+                println("HashCode-GS:"+allCards.hashCode())
+                findNavController().navigate(R.id.gameSettings,arguments)
             })
             .setNegativeButton("Yeniden Başla", DialogInterface.OnClickListener { dialog, id ->
+                arguments?.putParcelableArrayList("cardList",allCards)
                 findNavController().navigate(R.id.memoryGame, arguments)
             })
 
         val alert = dialogBuilder.create()
         alert.setTitle("Oyun Bitti")
         alert.show()
-
     }
 
     fun trueMatchPoint(card: MemoryCard, remainingTime: Int): Long {
@@ -283,3 +293,4 @@ class GameScreenFragment : Fragment() {
 
 
 }
+

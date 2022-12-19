@@ -21,7 +21,6 @@ class GameScreenViewModel : ViewModel(){
                     if (!value.isEmpty) {
                         val tempCardList = ArrayList<MemoryCard>()
                         val documents = value.documents
-
                         for (document in documents) {
 
                             val card_home_name = document.get("card_home_name")

@@ -1,7 +1,6 @@
 package com.trkgrn.memorygame
 
 import com.trkgrn.memorygame.data.model.MemoryCard
-import kotlin.random.Random
 
 
 class Test {
