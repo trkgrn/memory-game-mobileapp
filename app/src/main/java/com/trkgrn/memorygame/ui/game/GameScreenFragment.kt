@@ -13,9 +13,6 @@ import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.trkgrn.memorygame.R
 import com.trkgrn.memorygame.data.adapter.MemoryCardAdapter
 import com.trkgrn.memorygame.data.model.MemoryCard
@@ -36,13 +33,15 @@ class GameScreenFragment : Fragment() {
 
     private var curView: ImageView? = null
 
-    private var selectedCardFirst: Int? = null
-    private var selectedCardSecond: Int? = null
+    private var selectedFirstCardPos: Int? = null
+    private var selectedSecondCardPos: Int? = null
     private var selectedFirstView: ImageView? = null
     private var selectedSecondView: ImageView? = null
 
     private var isGameFinished = false
+    private var isSinglePlayer = true
 
+    private var isOnTheFirstPlayer = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -58,8 +57,6 @@ class GameScreenFragment : Fragment() {
         return view
     }
 
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val gridView = binding.gridMainCards
@@ -74,75 +71,10 @@ class GameScreenFragment : Fragment() {
 
             gridView.setOnItemClickListener { adapterView, convertView, position, id ->
 
-                var remainingTime = binding.showChronometer.text.toString().toInt()
-                var lastTime = totalTime.toString().toInt() - remainingTime
-
-                if (gameCards.get(position).isMatch || position == selectedCardFirst) {
+                if (gameCards.get(position).isMatch || position == selectedFirstCardPos) {
 
                 } else {
-                    if (selectedCardFirst == null) { // ilk kart seçiliyorsa
-                        selectedCardFirst = position
-                        curView = convertView.findViewById<ImageView>(R.id.card_item)
-                        selectedFirstView = curView
-                        curView!!.setImageBitmap(gameCards.get(position).imageBitmap)
-                        gameCards.get(position).isHidden = false
-                    } else if (selectedCardFirst != null && selectedCardSecond == null) { // 2. kart seçiliyorsa
-                        selectedCardSecond = position
-                        curView = convertView.findViewById<ImageView>(R.id.card_item)
-                        selectedSecondView = curView
-                        curView!!.setImageBitmap(gameCards.get(position).imageBitmap)
-                        gameCards.get(position).isHidden = false
-                    }
-
-                    if (selectedCardFirst != null && selectedCardSecond != null) { // 2 kart seçildiyse
-                        val name1 = gameCards.get(selectedCardFirst!!).cardName
-                        val name2 = gameCards.get(selectedCardSecond!!).cardName
-
-                        if (name1.equals(name2)) { // Kartlar Eşleşiyorsa
-                            var score = binding.score1.text.toString().toLong()
-                            gameCards.get(selectedCardFirst!!).isMatch = true
-                            gameCards.get(selectedCardSecond!!).isMatch = true
-                            score += trueMatchPoint(
-                                gameCards.get(selectedCardFirst!!),
-                                remainingTime
-                            )
-                            binding.score1.text = score.toString()
-                            selectedCardFirst = null
-                            selectedCardSecond = null
-
-                            var falseMatchCount: Int = 0
-                            gameCards.forEach {
-                                if (!it.isMatch)
-                                    falseMatchCount++
-                            }
-                            if (falseMatchCount == 0) {
-                                println("Cards:"+gameCards.size + " Falses:"+falseMatchCount)
-                                onFinishGame()
-                            }
-
-                        } else { // Kartlar eşleşmiyorsa
-                            object : CountDownTimer(300, 100) {
-                                override fun onTick(p0: Long) {}
-                                override fun onFinish() {
-                                    var score = binding.score1.text.toString().toLong()
-                                    var point = falseMatchPoint(
-                                        gameCards.get(selectedCardFirst!!),
-                                        gameCards.get(selectedCardSecond!!),
-                                        lastTime
-                                    )
-                                    score = score - point
-                                    binding.score1.text = score.toString()
-                                    selectedFirstView!!.setImageResource(R.drawable.card_front_side)
-                                    selectedSecondView!!.setImageResource(R.drawable.card_front_side)
-                                    gameCards.get(selectedCardFirst!!).isHidden = true
-                                    gameCards.get(selectedCardSecond!!).isHidden = true
-                                    selectedCardFirst = null
-                                    selectedCardSecond = null
-                                }
-                            }.start()
-
-                        }
-                    }
+                    gameLogic(convertView, position)
                 }
 
             }
@@ -162,11 +94,14 @@ class GameScreenFragment : Fragment() {
             totalTime = 45L
             binding.score2.visibility = View.GONE
             binding.score2.visibility = View.GONE
+            isSinglePlayer = true
         } else {
             binding.showChronometer.text = "60"
             totalTime = 60L
             binding.score2Textview.visibility = View.VISIBLE
             binding.score2.visibility = View.VISIBLE
+            isSinglePlayer = false
+            isOnTheFirstPlayer = true
         }
     }
 
@@ -214,7 +149,7 @@ class GameScreenFragment : Fragment() {
                     card3 = slytherinList.get(it)
                     card4 = hufflepuffList.get(it)
                 }
-                IntStream.range(0, 2).forEach {iter->
+                IntStream.range(0, 2).forEach { iter ->
                     gameCards.add(MemoryCard(card1!!))
                     gameCards.add(MemoryCard(card2!!))
                     if (it != 4) {
@@ -249,33 +184,171 @@ class GameScreenFragment : Fragment() {
         }.start()
     }
 
+    fun gameLogic(convertView: View, position: Int) {
+        var remainingTime = binding.showChronometer.text.toString().toInt()
+        var lastTime = totalTime.toString().toInt() - remainingTime
+
+        chooseCard(convertView, position)
+
+        if (selectedFirstCardPos != null && selectedSecondCardPos != null) { // 2 kart seçildiyse
+            val name1 = gameCards.get(selectedFirstCardPos!!).cardName
+            val name2 = gameCards.get(selectedSecondCardPos!!).cardName
+
+            if (name1.equals(name2)) { // Kartlar Eşleşiyorsa
+                correctlyMatching(remainingTime)
+            } else { // Kartlar eşleşmiyorsa
+                wrongMatching(lastTime)
+            }
+        }
+    }
+
+    fun chooseCard(convertView: View, position: Int) {
+        if (selectedFirstCardPos == null) { // ilk kart seçiliyorsa
+            selectedFirstCardPos = position
+            curView = convertView.findViewById<ImageView>(R.id.card_item)
+            selectedFirstView = curView
+            curView!!.setImageBitmap(gameCards.get(position).imageBitmap)
+            gameCards.get(position).isHidden = false
+        } else if (selectedFirstCardPos != null && selectedSecondCardPos == null) { // 2. kart seçiliyorsa
+            selectedSecondCardPos = position
+            curView = convertView.findViewById<ImageView>(R.id.card_item)
+            selectedSecondView = curView
+            curView!!.setImageBitmap(gameCards.get(position).imageBitmap)
+            gameCards.get(position).isHidden = false
+        }
+    }
+
+    fun correctlyMatching(remainingTime: Int) {
+
+        if (isSinglePlayer) { // Tek Oyunculu Modda ise
+            var score = binding.score1.text.toString().toLong()
+            score += trueMatchPointOnSinglePlayer(
+                gameCards.get(selectedFirstCardPos!!),
+                remainingTime
+            )
+            binding.score1.text = score.toString()
+        } else { // Çoklu Oyunculu Modda ise
+            if (isOnTheFirstPlayer) { // Sıra 1. oyuncudaysa
+                var score1 = binding.score1.text.toString().toLong()
+                score1 += trueMatchPointOnMultiPlayer(gameCards.get(selectedFirstCardPos!!))
+                binding.score1.text = score1.toString()
+            } else { // Sıra 2. oyuncudaysa
+                var score2 = binding.score2.text.toString().toLong()
+                score2 += trueMatchPointOnMultiPlayer(gameCards.get(selectedFirstCardPos!!))
+                binding.score2.text = score2.toString()
+            }
+        }
+
+        gameCards.get(selectedFirstCardPos!!).isMatch = true
+        gameCards.get(selectedSecondCardPos!!).isMatch = true
+        selectedFirstCardPos = null
+        selectedSecondCardPos = null
+        gameFinishCheck()
+
+    }
+
+    fun wrongMatching(lastTime: Int) {
+        object : CountDownTimer(300, 100) {
+            override fun onTick(p0: Long) {}
+            override fun onFinish() {
+
+                if (isSinglePlayer) { // Tek oyunculu ise
+                    var score = binding.score1.text.toString().toLong()
+                    var point = falseMatchPointOnSinglePlayer(
+                        gameCards.get(selectedFirstCardPos!!),
+                        gameCards.get(selectedSecondCardPos!!),
+                        lastTime
+                    )
+                    score -= point
+                    binding.score1.text = score.toString()
+                } else { // Çoklu oyunculu ise
+                    if (isOnTheFirstPlayer) { // Sıra 1. oyuncudaysa
+                        var score1 = binding.score1.text.toString().toLong()
+                        score1 -= falseMatchPointOnMultiPlayer(
+                            gameCards.get(selectedFirstCardPos!!),
+                            gameCards.get(selectedSecondCardPos!!)
+                        )
+                        binding.score1.text = score1.toString()
+                    } else { // Sıra 2. oyuncudaysa
+                        var score2 = binding.score2.text.toString().toLong()
+                        score2 -= falseMatchPointOnMultiPlayer(
+                            gameCards.get(selectedFirstCardPos!!),
+                            gameCards.get(selectedSecondCardPos!!)
+                        )
+                        binding.score2.text = score2.toString()
+                    }
+                }
+
+                selectedFirstView!!.setImageResource(R.drawable.card_front_side)
+                selectedSecondView!!.setImageResource(R.drawable.card_front_side)
+                gameCards.get(selectedFirstCardPos!!).isHidden = true
+                gameCards.get(selectedSecondCardPos!!).isHidden = true
+                selectedFirstCardPos = null
+                selectedSecondCardPos = null
+                isOnTheFirstPlayer = if (isOnTheFirstPlayer) false else true // Sırayı diğerine ver
+            }
+        }.start()
+    }
+
+    fun gameFinishCheck() {
+        var falseMatchCount: Int = 0
+        gameCards.forEach {
+            if (!it.isMatch)
+                falseMatchCount++
+        }
+        if (falseMatchCount == 0) {
+            println("Cards:" + gameCards.size + " Falses:" + falseMatchCount)
+            onFinishGame()
+        }
+    }
+
     fun onFinishGame() {
+        var dialogMessage = ""
+        var title = ""
+
+        if (isSinglePlayer) {
+            val score = binding.score1.text.toString().toInt()
+            dialogMessage = "Skor: $score"
+            title = "Oyun Bitti"
+        } else {
+            val score1 = binding.score1.text.toString().toInt()
+            val score2 = binding.score2.text.toString().toInt()
+            dialogMessage = "1. Oyuncu Skor: $score1 \n" +
+                            "2. Oyuncu Skor: $score2"
+            if (score1 > score2)
+                title = "1. Oyuncu Kazandı!"
+            else if (score1==score2)
+                title = "Berabere"
+            else
+                title = "2. Oyuncu Kazandı!"
+        }
+
         isGameFinished = true
         val dialogBuilder = AlertDialog.Builder(context)
-        val score = binding.score1.text.toString().toInt()
 
-        dialogBuilder.setMessage("Skor: " + score)
+        dialogBuilder.setMessage(dialogMessage)
             .setCancelable(false)
             .setPositiveButton("Ayarlara Dön", DialogInterface.OnClickListener { dialog, id ->
-                arguments?.putParcelableArrayList("cardList",allCards)
-                println("HashCode-GS:"+allCards.hashCode())
-                findNavController().navigate(R.id.gameSettings,arguments)
+                arguments?.putParcelableArrayList("cardList", allCards)
+                println("HashCode-GS:" + allCards.hashCode())
+                findNavController().navigate(R.id.gameSettings, arguments)
             })
             .setNegativeButton("Yeniden Başla", DialogInterface.OnClickListener { dialog, id ->
-                arguments?.putParcelableArrayList("cardList",allCards)
+                arguments?.putParcelableArrayList("cardList", allCards)
                 findNavController().navigate(R.id.memoryGame, arguments)
             })
 
         val alert = dialogBuilder.create()
-        alert.setTitle("Oyun Bitti")
+        alert.setTitle(title)
         alert.show()
     }
 
-    fun trueMatchPoint(card: MemoryCard, remainingTime: Int): Long {
+
+    fun trueMatchPointOnSinglePlayer(card: MemoryCard, remainingTime: Int): Long {
         return (2 * card.cardPoint * card.cardHomePoint * remainingTime) / 10
     }
 
-    fun falseMatchPoint(card1: MemoryCard, card2: MemoryCard, lastTime: Int): Long {
+    fun falseMatchPointOnSinglePlayer(card1: MemoryCard, card2: MemoryCard, lastTime: Int): Long {
         var score: Long = 0
         var point1 = card1.cardPoint
         var point2 = card2.cardPoint
@@ -291,6 +364,21 @@ class GameScreenFragment : Fragment() {
         return score
     }
 
+    fun trueMatchPointOnMultiPlayer(card: MemoryCard): Long {
+        return (2 * card.cardPoint * card.cardHomePoint)
+    }
+
+    fun falseMatchPointOnMultiPlayer(card1: MemoryCard, card2: MemoryCard): Long {
+        var score = 0L
+        if (card1.cardHomeName.equals(card2.cardHomeName)) {
+            score = (card1.cardPoint + card2.cardPoint) / card1.cardHomePoint
+        } else {
+            score =
+                (card1.cardPoint + card2.cardPoint) / (2 * card1.cardHomePoint * card2.cardHomePoint)
+        }
+
+        return score
+    }
 
 }
 
