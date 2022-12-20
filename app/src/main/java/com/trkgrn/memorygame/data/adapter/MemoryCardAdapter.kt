@@ -1,23 +1,22 @@
 package com.trkgrn.memorygame.data.adapter
 
-import android.app.Activity
-import android.graphics.BitmapFactory
-import android.util.Base64
+import android.content.res.Resources
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.trkgrn.memorygame.R
 import com.trkgrn.memorygame.data.model.MemoryCard
 import com.trkgrn.memorygame.ui.game.GameScreenFragment
+import kotlin.math.roundToInt
 
-class MemoryCardAdapter(context: GameScreenFragment, arrayListCards: ArrayList<MemoryCard>) : BaseAdapter(){
+class MemoryCardAdapter(context: GameScreenFragment, arrayListCards: ArrayList<MemoryCard>,gridSize:Int) : BaseAdapter(){
 
     var context = context
     var memoryCards = arrayListCards
+    val Int.dp: Int get() = (this * Resources.getSystem().displayMetrics.density).roundToInt()
+    var gridSize = gridSize
 
     override fun getCount(): Int {
         return memoryCards.size
@@ -43,6 +42,9 @@ class MemoryCardAdapter(context: GameScreenFragment, arrayListCards: ArrayList<M
             holder = ViewHolder()
 
             holder.mImageView = myView!!.findViewById<ImageView>(R.id.card_item) as ImageView
+
+            setSize(holder.mImageView!!)
+
             if (!memoryCards.get(position).isHidden || memoryCards.get(position).isMatch){
                 holder.mImageView!!.setImageBitmap(memoryCards.get(position).imageBitmap)
             }
@@ -57,6 +59,21 @@ class MemoryCardAdapter(context: GameScreenFragment, arrayListCards: ArrayList<M
 
         return myView
 
+    }
+
+
+    fun setSize(imageView: ImageView){
+        var resources= context.resources
+        if (gridSize==2){
+            imageView.layoutParams.width = resources.getInteger(R.integer.easy_width).dp
+            imageView.layoutParams.height = resources.getInteger(R.integer.easy_height).dp
+        }else if(gridSize==4){
+            imageView.layoutParams.width = resources.getInteger(R.integer.mid_width).dp
+            imageView.layoutParams.height = resources.getInteger(R.integer.mid_height).dp
+        }else if (gridSize==6){
+            imageView.layoutParams.width = resources.getInteger(R.integer.hard_width).dp
+            imageView.layoutParams.height = resources.getInteger(R.integer.hard_height).dp
+        }
     }
 
 

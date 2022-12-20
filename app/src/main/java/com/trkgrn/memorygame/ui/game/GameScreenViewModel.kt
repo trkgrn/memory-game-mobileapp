@@ -1,5 +1,6 @@
 package com.trkgrn.memorygame.ui.game
 
+import android.content.res.Resources
 import android.graphics.BitmapFactory
 import android.util.Base64
 import androidx.lifecycle.MutableLiveData
@@ -7,8 +8,9 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.trkgrn.memorygame.data.model.MemoryCard
+import kotlin.math.roundToInt
 
-class GameScreenViewModel : ViewModel(){
+class GameScreenViewModel : ViewModel() {
 
     val cardList = MutableLiveData<ArrayList<MemoryCard>>()
 
@@ -29,7 +31,8 @@ class GameScreenViewModel : ViewModel(){
                             val card_img = document.get("card_img")
                             val card_home_point = document.get("card_home_point")
                             val imageBytes = Base64.decode(card_img as String, Base64.DEFAULT)
-                            val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                            val bitmap =
+                                BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
 
                             val card = MemoryCard(
                                 card_name as String,

@@ -1,6 +1,7 @@
 package com.trkgrn.memorygame
 
 import com.trkgrn.memorygame.data.model.MemoryCard
+import com.trkgrn.memorygame.util.TxtUtil
 
 
 class Test {
@@ -20,14 +21,20 @@ fun main(args: Array<String>){
 //    var card3 = MemoryCard(card)
 //    println(card3.hashCode())
 
-    var x = true
+//    var x = true
+//
+//    x = if (x) false else true
+//    println(x)
+//    x = if (x) false else true
+//    println(x)
+//    x = if (x) false else true
+//    println(x)
 
-    x = if (x) false else true
-    println(x)
-    x = if (x) false else true
-    println(x)
-    x = if (x) false else true
-    println(x)
+    var card1 = MemoryCard("A","B","C",5L,6L,null)
+    var card2 = MemoryCard("x","B","sadd",5L,6L,null)
+    var cards = arrayListOf<MemoryCard>(card1,card2,card1)
+
+    TxtUtil.writeTxt(cards)
 
 
 

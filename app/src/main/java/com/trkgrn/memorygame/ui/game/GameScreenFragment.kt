@@ -20,13 +20,17 @@ import com.trkgrn.memorygame.R
 import com.trkgrn.memorygame.data.adapter.MemoryCardAdapter
 import com.trkgrn.memorygame.data.model.MemoryCard
 import com.trkgrn.memorygame.databinding.FragmentGameScreenBinding
+import com.trkgrn.memorygame.databinding.MemoryCardHiddenItemBinding
+import com.trkgrn.memorygame.util.TxtUtil
 import java.util.stream.IntStream
+
 
 class GameScreenFragment : Fragment() {
 
     private lateinit var binding: FragmentGameScreenBinding
+    private lateinit var bindingCardItem: MemoryCardHiddenItemBinding
     private val viewModel: GameScreenViewModel by viewModels()
-    private var mediaPlayer:MediaPlayer= MediaPlayer()
+    private var mediaPlayer: MediaPlayer = MediaPlayer()
 
     private var gridNumColumns = 4
     private var playerMode = 1
@@ -52,17 +56,26 @@ class GameScreenFragment : Fragment() {
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = FragmentGameScreenBinding.inflate(layoutInflater)
+        bindingCardItem = MemoryCardHiddenItemBinding.inflate(layoutInflater)
         val view = binding.root
         setHasOptionsMenu(true)
         val callback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
         }
 
+        val bundle = arguments
+        gridNumColumns = bundle!!.get("gridSize") as Int
+        playerMode = bundle!!.get("playerMode") as Int
+
+
+
         return view
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val gridView = binding.gridMainCards
+
 
         viewModel.cardList.observe(viewLifecycleOwner) {
             allCards = it
@@ -70,6 +83,7 @@ class GameScreenFragment : Fragment() {
 
             loadSettings()
             loadGameCards(gridView)
+            TxtUtil.writeTxt(gameCards,requireContext())
             startGame()
 
             gridView.setOnItemClickListener { adapterView, convertView, position, id ->
@@ -87,11 +101,7 @@ class GameScreenFragment : Fragment() {
     }
 
     fun loadSettings() {
-        val bundle = arguments
-        if (bundle != null) {
-            gridNumColumns = bundle.get("gridSize") as Int
-            playerMode = bundle.get("playerMode") as Int
-        }
+
         if (playerMode == 1) {
             binding.showChronometer.text = "45"
             totalTime = 45L
@@ -109,6 +119,8 @@ class GameScreenFragment : Fragment() {
             isSinglePlayer = false
             isOnTheFirstPlayer = true
         }
+
+
     }
 
     fun loadGameCards(gridView: GridView) {
@@ -169,7 +181,8 @@ class GameScreenFragment : Fragment() {
 
         gameCards.shuffle()
         gridView.numColumns = gridNumColumns
-        val memoryCardAdapter = MemoryCardAdapter(this@GameScreenFragment, gameCards)
+        val memoryCardAdapter =
+            MemoryCardAdapter(this@GameScreenFragment, gameCards, gridNumColumns)
         gridView.adapter = memoryCardAdapter
     }
 
@@ -191,7 +204,6 @@ class GameScreenFragment : Fragment() {
             }
         }.start()
     }
-
 
     fun gameLogic(convertView: View, position: Int) {
         var remainingTime = binding.showChronometer.text.toString().toInt()
@@ -229,7 +241,7 @@ class GameScreenFragment : Fragment() {
 
     fun correctlyMatching(remainingTime: Int) {
 
-        var music = MediaPlayer.create(context,R.raw.happy)
+        var music = MediaPlayer.create(context, R.raw.happy)
         music.start()
 
         if (isSinglePlayer) { // Tek Oyunculu Modda ise
@@ -311,7 +323,7 @@ class GameScreenFragment : Fragment() {
         if (falseMatchCount == 0) {
             println("Cards:" + gameCards.size + " Falses:" + falseMatchCount)
             mediaPlayer.stop()
-            mediaPlayer = MediaPlayer.create(context,R.raw.alkis)
+            mediaPlayer = MediaPlayer.create(context, R.raw.alkis)
             mediaPlayer.start()
             onFinishGame()
         }
@@ -329,10 +341,10 @@ class GameScreenFragment : Fragment() {
             val score1 = binding.score1.text.toString().toInt()
             val score2 = binding.score2.text.toString().toInt()
             dialogMessage = "1. Oyuncu Skor: $score1 \n" +
-                            "2. Oyuncu Skor: $score2"
+                    "2. Oyuncu Skor: $score2"
             if (score1 > score2)
                 title = "1. Oyuncu Kazandı!"
-            else if (score1==score2)
+            else if (score1 == score2)
                 title = "Berabere"
             else
                 title = "2. Oyuncu Kazandı!"
@@ -341,9 +353,9 @@ class GameScreenFragment : Fragment() {
         isGameFinished = true
         val dialogBuilder = AlertDialog.Builder(context)
 
-        if (binding.showChronometer.text.toString().toInt().equals(0)){
+        if (binding.showChronometer.text.toString().toInt().equals(0)) {
             mediaPlayer.stop()
-            var music = MediaPlayer.create(context,R.raw.time_finish)
+            var music = MediaPlayer.create(context, R.raw.time_finish)
             music.start()
         }
 
@@ -413,8 +425,8 @@ class GameScreenFragment : Fragment() {
             myMenu.findItem(R.id.audioMute).setIcon(R.drawable.ic_baseline_volume_off_24)
         else
             myMenu.findItem(R.id.audioMute).setIcon(R.drawable.ic_baseline_volume_up_24)
-
     }
+
 
 }
 

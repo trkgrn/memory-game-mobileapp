@@ -4,14 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#CFCFE4">
+    android:background="@drawable/hogwarts">
 
     <RelativeLayout
         android:id="@+id/wrap_status"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="15dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -104,7 +104,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/wrap_status"
         android:layout_marginTop="32dp"
-        android:numColumns="4"
+        android:numColumns="2"
         android:paddingBottom="20dp" />
 
 </RelativeLayout>

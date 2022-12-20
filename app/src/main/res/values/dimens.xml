@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="easy_height">240dp</dimen>
+    <dimen name="easy_width">170dp</dimen>
+    <dimen name="mid_height">105dp</dimen>
+    <dimen name="mid_width">75dp</dimen>
+    <dimen name="hard_height">70dp</dimen>
+    <dimen name="hard_width">50dp</dimen>
+</resources>

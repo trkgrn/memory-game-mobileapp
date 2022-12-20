@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="easy_height">240</integer>
+    <integer name="easy_width">170</integer>
+    <integer name="mid_height">105</integer>
+    <integer name="mid_width">75</integer>
+    <integer name="hard_height">70</integer>
+    <integer name="hard_width">50</integer>
+</resources>
