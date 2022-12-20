@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:title="Test"
+        android:id="@+id/audioMute"
+        android:icon="@drawable/ic_baseline_volume_up_24"
+        app:showAsAction="always">
+    </item>
+
+    <item
+        android:title="Test"
         android:id="@+id/menuRoot"
         android:icon="@drawable/ic_baseline_more_vert_24"
         app:showAsAction="always">

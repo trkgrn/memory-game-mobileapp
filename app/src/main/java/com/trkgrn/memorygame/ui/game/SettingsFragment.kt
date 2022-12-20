@@ -16,6 +16,7 @@ import com.google.common.collect.HashBiMap
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.trkgrn.memorygame.MainActivity
 import com.trkgrn.memorygame.R
 import com.trkgrn.memorygame.data.model.MemoryCard
 import com.trkgrn.memorygame.databinding.FragmentSettingsBinding
@@ -26,19 +27,23 @@ class SettingsFragment : Fragment() {
     lateinit var radioGroupPlayerMode: RadioGroup
     lateinit var startGameButton: Button
 
-    companion object{
+    companion object {
         var difficulties: BiMap<String, Int> = HashBiMap.create()
         const val EASY = "Kolay"
         const val MID = "Orta"
         const val HARD = "Zor"
 
-        var playerModes : BiMap<String, Int> = HashBiMap.create()
+        var playerModes: BiMap<String, Int> = HashBiMap.create()
         const val SINGLE_PLAYER = "Tek Oyunculu"
         const val TWO_PLAYER = "İki Oyunculu"
     }
 
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = FragmentSettingsBinding.inflate(layoutInflater)
         val view = binding.root
@@ -74,31 +79,32 @@ class SettingsFragment : Fragment() {
             val playerMode = getPlayerModeFromSelectedRadioButtonId(checkedRadioButtonId)!!
 
             println("GridSize: " + gridSize.toString())
-            println("pMode: "+ playerMode.toString())
+            println("pMode: " + playerMode.toString())
 
-            var bundle:Bundle = Bundle()
-            bundle.putInt("gridSize",gridSize)
-            bundle.putInt("playerMode",playerMode)
+            var bundle: Bundle = Bundle()
+            bundle.putInt("gridSize", gridSize)
+            bundle.putInt("playerMode", playerMode)
 
-            findNavController().navigate(R.id.memoryGame,bundle)
+            findNavController().navigate(R.id.memoryGame, bundle)
 
         }
 
     }
 
-    private fun getDifficultyFromSelectedId(selectedItem:Int) = when (selectedItem){
+    private fun getDifficultyFromSelectedId(selectedItem: Int) = when (selectedItem) {
 
         R.id.two_radiobutton -> difficulties[EASY]
         R.id.four_radiobutton -> difficulties[MID]
-        R.id.six_radiobutton-> difficulties[HARD]
+        R.id.six_radiobutton -> difficulties[HARD]
         else -> difficulties[MID]
     }
 
-    private fun getPlayerModeFromSelectedRadioButtonId(selectedDifficulty:Int) = when (selectedDifficulty){
-        R.id.onePlayer_radiobutton -> playerModes[SINGLE_PLAYER]
-        R.id.twoPlayer_radiobutton -> playerModes[TWO_PLAYER]
-        else -> playerModes[SINGLE_PLAYER]
-    }
+    private fun getPlayerModeFromSelectedRadioButtonId(selectedDifficulty: Int) =
+        when (selectedDifficulty) {
+            R.id.onePlayer_radiobutton -> playerModes[SINGLE_PLAYER]
+            R.id.twoPlayer_radiobutton -> playerModes[TWO_PLAYER]
+            else -> playerModes[SINGLE_PLAYER]
+        }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
@@ -107,6 +113,10 @@ class SettingsFragment : Fragment() {
         myMenu.findItem(R.id.menuRegister).isVisible = false
         myMenu.findItem(R.id.menuChangePassword).isVisible = true
         myMenu.findItem(R.id.menuLogout).isVisible = true
+        if (MainActivity.isMuted)
+            myMenu.findItem(R.id.audioMute).setIcon(R.drawable.ic_baseline_volume_off_24)
+        else
+            myMenu.findItem(R.id.audioMute).setIcon(R.drawable.ic_baseline_volume_up_24)
     }
 
 }

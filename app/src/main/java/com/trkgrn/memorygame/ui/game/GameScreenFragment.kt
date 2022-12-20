@@ -2,6 +2,7 @@ package com.trkgrn.memorygame.ui.game
 
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
@@ -11,10 +12,10 @@ import android.view.ViewGroup
 import android.widget.GridView
 import android.widget.ImageView
 import androidx.activity.addCallback
-import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.trkgrn.memorygame.MainActivity
 import com.trkgrn.memorygame.R
 import com.trkgrn.memorygame.data.adapter.MemoryCardAdapter
 import com.trkgrn.memorygame.data.model.MemoryCard
@@ -25,6 +26,7 @@ class GameScreenFragment : Fragment() {
 
     private lateinit var binding: FragmentGameScreenBinding
     private val viewModel: GameScreenViewModel by viewModels()
+    private var mediaPlayer:MediaPlayer= MediaPlayer()
 
     private var gridNumColumns = 4
     private var playerMode = 1
@@ -53,7 +55,6 @@ class GameScreenFragment : Fragment() {
         val view = binding.root
         setHasOptionsMenu(true)
         val callback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            println("Tıklandı")
         }
 
         return view
@@ -94,14 +95,17 @@ class GameScreenFragment : Fragment() {
         if (playerMode == 1) {
             binding.showChronometer.text = "45"
             totalTime = 45L
+            binding.score2Textview.visibility = View.GONE
             binding.score2.visibility = View.GONE
-            binding.score2.visibility = View.GONE
+            binding.score1Textview.text = "Skor:"
             isSinglePlayer = true
         } else {
             binding.showChronometer.text = "60"
             totalTime = 60L
             binding.score2Textview.visibility = View.VISIBLE
             binding.score2.visibility = View.VISIBLE
+            binding.score1Textview.text = "Skor 1:"
+            binding.score2Textview.text = "Skor 2:"
             isSinglePlayer = false
             isOnTheFirstPlayer = true
         }
@@ -170,6 +174,8 @@ class GameScreenFragment : Fragment() {
     }
 
     fun startGame() {
+        mediaPlayer = MediaPlayer.create(context, R.raw.prologue)
+        mediaPlayer.start()
         object : CountDownTimer(1000 * totalTime, 1000) {
             override fun onTick(p0: Long) {
                 if (isGameFinished)
@@ -222,6 +228,9 @@ class GameScreenFragment : Fragment() {
     }
 
     fun correctlyMatching(remainingTime: Int) {
+
+        var music = MediaPlayer.create(context,R.raw.happy)
+        music.start()
 
         if (isSinglePlayer) { // Tek Oyunculu Modda ise
             var score = binding.score1.text.toString().toLong()
@@ -301,6 +310,9 @@ class GameScreenFragment : Fragment() {
         }
         if (falseMatchCount == 0) {
             println("Cards:" + gameCards.size + " Falses:" + falseMatchCount)
+            mediaPlayer.stop()
+            mediaPlayer = MediaPlayer.create(context,R.raw.alkis)
+            mediaPlayer.start()
             onFinishGame()
         }
     }
@@ -329,6 +341,12 @@ class GameScreenFragment : Fragment() {
         isGameFinished = true
         val dialogBuilder = AlertDialog.Builder(context)
 
+        if (binding.showChronometer.text.toString().toInt().equals(0)){
+            mediaPlayer.stop()
+            var music = MediaPlayer.create(context,R.raw.time_finish)
+            music.start()
+        }
+
         dialogBuilder.setMessage(dialogMessage)
             .setCancelable(false)
             .setPositiveButton("Ayarlara Dön", DialogInterface.OnClickListener { dialog, id ->
@@ -340,10 +358,11 @@ class GameScreenFragment : Fragment() {
                 arguments?.putParcelableArrayList("cardList", allCards)
                 findNavController().navigate(R.id.memoryGame, arguments)
             })
-
         val alert = dialogBuilder.create()
         alert.setTitle(title)
         alert.show()
+
+
     }
 
 
@@ -390,6 +409,10 @@ class GameScreenFragment : Fragment() {
         myMenu.findItem(R.id.menuRegister).isVisible = false
         myMenu.findItem(R.id.menuChangePassword).isVisible = false
         myMenu.findItem(R.id.menuLogout).isVisible = false
+        if (MainActivity.isMuted)
+            myMenu.findItem(R.id.audioMute).setIcon(R.drawable.ic_baseline_volume_off_24)
+        else
+            myMenu.findItem(R.id.audioMute).setIcon(R.drawable.ic_baseline_volume_up_24)
 
     }
 

@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.core.view.get
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
@@ -44,6 +45,10 @@ class LoginFragment : Fragment() {
             register()
         }
 
+        val callback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            findNavController().navigate(R.id.mainLobbyFragment)
+        }
+
     }
 
 
@@ -77,6 +82,10 @@ class LoginFragment : Fragment() {
         myMenu.findItem(R.id.menuRegister).isVisible = true
         myMenu.findItem(R.id.menuChangePassword).isVisible = false
         myMenu.findItem(R.id.menuLogout).isVisible = false
+        if (MainActivity.isMuted)
+            myMenu.findItem(R.id.audioMute).setIcon(R.drawable.ic_baseline_volume_off_24)
+        else
+            myMenu.findItem(R.id.audioMute).setIcon(R.drawable.ic_baseline_volume_up_24)
 
     }
 

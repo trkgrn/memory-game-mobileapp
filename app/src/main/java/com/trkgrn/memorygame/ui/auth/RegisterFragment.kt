@@ -8,10 +8,12 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.trkgrn.memorygame.MainActivity
 import com.trkgrn.memorygame.R
 import com.trkgrn.memorygame.databinding.FragmentRegisterBinding
 
@@ -39,6 +41,10 @@ class RegisterFragment : Fragment() {
 
         binding.registerButton.setOnClickListener {
             signUp()
+        }
+
+        val callback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            findNavController().navigate(R.id.mainLobbyFragment)
         }
     }
 
@@ -73,7 +79,10 @@ class RegisterFragment : Fragment() {
         myMenu.findItem(R.id.menuRegister).isVisible = true
         myMenu.findItem(R.id.menuChangePassword).isVisible = false
         myMenu.findItem(R.id.menuLogout).isVisible = false
-
+        if (MainActivity.isMuted)
+            myMenu.findItem(R.id.audioMute).setIcon(R.drawable.ic_baseline_volume_off_24)
+        else
+            myMenu.findItem(R.id.audioMute).setIcon(R.drawable.ic_baseline_volume_up_24)
     }
 
 

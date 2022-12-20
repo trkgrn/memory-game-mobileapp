@@ -7,7 +7,9 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.activity.addCallback
 import androidx.navigation.findNavController
+import com.trkgrn.memorygame.MainActivity
 import com.trkgrn.memorygame.R
 import com.trkgrn.memorygame.databinding.FragmentMainLobbyBinding
 
@@ -30,8 +32,13 @@ class MainLobbyFragment : Fragment() {
         binding.registerButton.setOnClickListener{
             it.findNavController().navigate(R.id.registerFragment)
         }
+
+        val callback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+        }
         return view
     }
+
+
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
@@ -40,6 +47,11 @@ class MainLobbyFragment : Fragment() {
         myMenu.findItem(R.id.menuRegister).isVisible = true
         myMenu.findItem(R.id.menuChangePassword).isVisible = false
         myMenu.findItem(R.id.menuLogout).isVisible = false
+        if (MainActivity.isMuted)
+            myMenu.findItem(R.id.audioMute).setIcon(R.drawable.ic_baseline_volume_off_24)
+        else
+            myMenu.findItem(R.id.audioMute).setIcon(R.drawable.ic_baseline_volume_up_24)
+
 
     }
 }
